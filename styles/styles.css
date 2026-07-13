@@ -1,0 +1,82 @@
+/* tbody tr {
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background-color: #f5f7fa;
+    transform: scale(1.01);
+}
+
+tbody tr td {
+    border-bottom: 1px solid #eee;
+} */
+body{
+    background-color: rgb(209, 209, 214);
+ }
+
+ .add-button{
+     margin-bottom: 7px;
+    margin-right: 30px;
+    display: block;
+    float: right;
+    
+ }
+ #show-customer-form ,#add-product,#add-category,#show-purchase-button{
+    
+    margin-bottom: 7px;
+    margin-right: 30px;
+    margin-top: 4;
+    display: block;
+    float: right;
+ }
+
+ #category-table{
+    margin-top: 40px;
+    width:auto;
+ }
+ .table{
+    
+   width: 100%;
+    overflow-x: auto;
+    height:auto;
+    border-collapse: collapse;
+ }
+ th, td {
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.login-body{
+    background: rgb(96, 97, 97);
+    background-size: cover;
+    margin: 0px;
+    height: 70vh;
+    display: flex;
+    justify-content: center; /* horizontal */
+    align-items: center;     /* vertical */
+
+}
+
+.login-box{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 6px;
+}
+
+tbody tr {
+    background: white;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
