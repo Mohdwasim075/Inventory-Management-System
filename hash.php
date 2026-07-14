@@ -36,4 +36,6 @@ $success = findUserByEmail($db, 'nisaar@gmail.com');
 
 
 ?>
-<h2><?= htmlspecialchars($success['id']) ?></h2>
+<h2><?= var_dump(empty(null))?></h2>
+
+

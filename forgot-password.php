@@ -1,111 +1,57 @@
-<?php
+<?php 
 require "includes/init.php";
 
-$email = "";
-$password = "";
-$confirmPassword = "";
 
-$showResetForm = false;
 $errors = [];
+$email = "";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = Database::getConn();
 
-    // Step 1 - Verify Email
-    if (isset($_POST['verify_email'])) {
+    $email = trim($_POST["email"] ?? "");
 
-        $email = trim($_POST['email']??'');
+    if ($email === "") {
 
-        if (empty($email)) {
-            $errors['email'] = "Email is required.";
-        }elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $errors['email'] = "Enter valid Email";
+        $errors['email'] = "Email is required.";
+
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+        $errors['email'] = "Invalid email format.";
+
+    } else {
+
+        $user = User::findUserByEmail($conn, $email);
+
+        if ($user) {
+
+            $resetLink = PasswordReset::sendResetLink(
+                $conn,
+                $user['userId']
+            );
+
+            Mail::sendPasswordReset($email, $resetLink);
+
         }
-         else {
 
-           $user = User::findUserByEmail($conn, $email);
-           //var_dump($user);
-            if ($user) {
-                
+        $_SESSION['mail-alert'] = [
 
-                //use a class function to set userid and hash token  
-                $resetLink = PasswordReset::sendResetLink($conn, $user['userId']);
+            'type' => 'success',
 
-                $sendResetEmail = Mail::sendPasswordReset($email, $resetLink);
+            'message' =>
+                'If an account with that email address exists, a password reset link has been sent. Please check your inbox and spam folder.'
 
-                if($sendResetEmail){
-                    
-                    echo 'email sent';
-                    exit;
-                }else{
-                    echo 'email not sent';
-                    exit;
-                }
+        ];
 
-
-
-                //send the user email the reset url token link
-                
-
-
-                //send the original token to the user email with the reset Url link
-                $showResetForm = true;
-
-
-            } else {
-
-                $errors['email'] = "Email not found.";
-
-            }
-        }
+        Url::redirect('/login.php');
+        exit;
     }
 
-    // Step 2 - Reset Password
-    if (isset($_POST['reset_password'])) {
-
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $confirmPassword = $_POST['confirm_password'];
-
-        $showResetForm = true;
-
-        if (empty($password)) {
-
-            $errors['password'] = "Password is required.";
-
-        } elseif (strlen($password) < 6) {
-
-            $errors['password'] = "Minimum 6 characters.";
-
-        }
-
-        if ($password !== $confirmPassword) {
-
-            $errors['confirm_password'] = "Passwords do not match.";
-
-        }
-
-        if (empty($errors)) {
-
-            $setPassword = User::resetUserPassword($conn,$email, $password);
-
-            if ($setPassword) {
-
-                header("Location: login.php?reset=success");
-                exit;
-
-            } else {
-
-                $errors['general'] = "Unable to reset password.";
-
-            }
-        }
-    }
 }
 
+
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -119,143 +65,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link href="styles/styles.css" rel='stylesheet'></link>
   <title>Log </title>
 </head>
-<body class="login-body">
-<div class="login-box">
-  <div class="login-logo">
-        <a href="#"><b>IMS</b></a>
-    </div>
+<body >
+<div class="login-body">
 
-    <div class="card">
+    <div class="login-box">
 
-        <div class="card-body login-card-body">
-    <form method="post">
+        <div class="card">
 
-<?php if (!$showResetForm): ?>
+            <div class="card-body login-card-body">
 
-    <div class="mb-3">
+                <div class="login-logo">
 
-        <label>Email</label>
+                    <a href="#">
 
-        <div class="input-group">
+                        <b>IMS</b>
 
-            <input
-                type="text"
-                name="email"
-                class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
-                value="<?= htmlspecialchars($email) ?>"
-            >
+                    </a>
 
-            <span class="input-group-text">
-                <i class="bi bi-envelope-fill"></i>
-            </span>
+                </div>
+                   <?php if (isset($_SESSION['mail-alert'])): ?>
 
-        </div>
+                        <div class="alert alert-<?= $_SESSION['mail-alert']['type']; ?> alert-dismissible fade show">
 
-        <?php if(isset($errors['email'])): ?>
-            <div class="invalid-feedback d-block">
-                <?= $errors['email']; ?>
+                            <?= htmlspecialchars($_SESSION['mail-alert']['message']); ?>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert">
+
+                            </button>
+
+                        </div>
+
+                        <?php unset($_SESSION['mail-alert']); ?>
+
+                    <?php endif; ?>
+                
+
+                <form method="post">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Email
+
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="text"
+                                name="email"
+                                class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
+                                placeholder="Enter your email"
+                                value="<?= htmlspecialchars($email) ?>">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-envelope-fill"></i>
+
+                            </span>
+
+                        </div>
+
+                        <?php if (isset($errors['email'])): ?>
+
+                            <div class="invalid-feedback d-block">
+
+                                <?= $errors['email']; ?>
+
+                            </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        name="verify_email"
+                        class="btn btn-primary w-100 mt-3">
+
+                        Send Reset Link
+
+                    </button>
+
+                    <div class="mt-3 text-center">
+
+                        <a
+                            href="login.php"
+                            class="btn btn-outline-secondary w-100">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Back to Login
+
+                        </a>
+
+                    </div>
+
+                </form>
+
             </div>
-        <?php endif; ?>
+
+        </div>
 
     </div>
 
-    <button
-        type="submit"
-        name="verify_email"
-        class="btn btn-primary w-100">
-
-        Verify Email
-
-    </button>
-    <div class="mt-3 text-center">
-    <a href="login.php" class="btn btn-outline-secondary w-100">
-        <i class="bi bi-arrow-left"></i>
-        Back to Login
-    </a>
 </div>
-
-<?php else: ?>
-
-    <input
-        type="hidden"
-        name="email"
-        value="<?= htmlspecialchars($email) ?>">
-
-    <div class="mb-3">
-
-        <label>New Password</label>
-
-        <div class="input-group">
-
-            <input
-                type="password"
-                name="password"
-                class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>">
-
-            <span class="input-group-text">
-                <i class="bi bi-lock-fill"></i>
-            </span>
-
-        </div>
-
-        <?php if(isset($errors['password'])): ?>
-            <div class="invalid-feedback d-block">
-                <?= $errors['password']; ?>
-            </div>
-        <?php endif; ?>
-
-    </div>
-
-    <div class="mb-3">
-
-        <label>Confirm Password</label>
-
-        <div class="input-group">
-
-            <input
-                type="password"
-                name="confirm_password"
-                class="form-control <?= isset($errors['confirm_password']) ? 'is-invalid' : '' ?>">
-
-            <span class="input-group-text">
-                <i class="bi bi-lock-fill"></i>
-            </span>
-
-        </div>
-
-        <?php if(isset($errors['confirm_password'])): ?>
-            <div class="invalid-feedback d-block">
-                <?= $errors['confirm_password']; ?>
-            </div>
-        <?php endif; ?>
-
-    </div>
-
-    <button
-        type="submit"
-        name="reset_password"
-        class="btn btn-success w-100">
-
-        Reset Password
-
-    </button>
-    <div class="mt-3 text-center">
-    <a href="login.php" class="btn btn-outline-secondary w-100">
-        <i class="bi bi-arrow-left"></i>
-        Back to Login
-    </a>
-</div>
-
-<?php endif; ?>
-
-</form>
-</div>
-        </div>
-        </div>
-  </body>
-    
-    
-  </form>
 <!-- Before </body> -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>

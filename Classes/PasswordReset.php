@@ -1,15 +1,11 @@
 <?php
 
-/**
- * 
- * 
- * 
-*/
+
 
 Class PasswordReset{
 
     private CONST TOKEN_BYTES = 32;
-    private CONST EXPIRES_MINS = 20;
+
 
 
     //save the hashed token , expires at(time) with the resp userId
@@ -25,7 +21,7 @@ Class PasswordReset{
         $token_hash = hash('sha256', $token);
 
         $expires = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
-        $expires->modify('+10 minutes ');
+        $expires->modify('+5 minutes ');
 
 
         $expiresAt = $expires->format('Y-m-d H:i:s');
@@ -50,9 +46,9 @@ Class PasswordReset{
 
     //validate token of the URL 
 
-    public static function findByToken($conn, $URlToken){ 
+    public static function findByToken($conn, $urlToken){ 
 
-        $tokenHash = hash('sha256',$URlToken);
+        $tokenHash = hash('sha256',$urlToken);
         
         $sql = "SELECT
                         id,
@@ -71,18 +67,27 @@ Class PasswordReset{
 
         $stmt->execute();
         $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row;
+        return $result->fetch_assoc() ?: null ;
+       
 
     }
-    //send user the reset url token via email
-    public static function checkResetValidToken(){
 
+    //delete the reset token after successful password reset
+    public static function deleteToken($conn, $urlToken){
 
+        $tokenHash = hash('sha256',$urlToken);
 
+        $sql = "DELETE FROM password_resets where token_hash = ?";
 
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(
+            "s",
+            $tokenHash
+        );
 
+        $stmt->execute();
 
     }
+    
 }
 

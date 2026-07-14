@@ -82,10 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Log </title>
 </head>
 <body class="login-body">
+    
 <div class="login-box">
+    
 
     <div class="login-logo">
         <a href="#"><b>IMS</b></a>
+        
     </div>
 
     <div class="card">
@@ -101,6 +104,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?= htmlspecialchars($errors['general']) ?>
                 </div>
             <?php endif; ?>
+
+            <!-- show reset-alert  -->
+            <?php if (isset($_SESSION['reset-alert'])): ?>
+
+                        <div class="alert alert-<?= $_SESSION['reset-alert']['type']; ?> alert-dismissible fade show">
+
+                            <?= htmlspecialchars($_SESSION['reset-alert']['message']); ?>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert">
+
+                            </button>
+
+                        </div>
+
+                        <?php unset($_SESSION['reset-alert']); ?>
+
+                    <?php endif; ?>
+            <?php if (isset($_SESSION['mail-alert'])): ?>
+
+                        <div class="alert alert-<?= $_SESSION['mail-alert']['type']; ?> alert-dismissible fade show">
+
+                            <?= htmlspecialchars($_SESSION['mail-alert']['message']); ?>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert">
+
+                            </button>
+
+                        </div>
+
+                        <?php unset($_SESSION['mail-alert']); ?>
+
+                    <?php endif; ?>
 
             <form method="post">
 
@@ -209,8 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 </div>
-  </body>
-    
+
     
   </form>
 <!-- Before </body> -->

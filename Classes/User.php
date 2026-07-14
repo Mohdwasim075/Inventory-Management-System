@@ -63,15 +63,15 @@ Class User{
 
     //reset user password 
 
-    public static function resetUserPassword($conn,$email , $password){
+    public static function resetUserPassword($conn,$userId , $password){
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $conn->prepare(
-                "UPDATE users SET password=? WHERE email=?"
+                "UPDATE users SET password=? WHERE id=?"
             );
 
-            $stmt->bind_param("ss", $hashedPassword, $email);
+            $stmt->bind_param("si", $hashedPassword, $userId);
             if($stmt->execute()){
                 return true;
             }else{

@@ -15,6 +15,12 @@ body{
     background-color: rgb(209, 209, 214);
  }
 
+ .email{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+ }
  .add-button{
      margin-bottom: 7px;
     margin-right: 30px;

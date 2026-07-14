@@ -13,7 +13,7 @@ $companyId = Auth::companyId();
 $products = Product::getAvaliableProducts($conn, $companyId);
 
 
-var_dump($products);
+// var_dump($products);
 $customers = Customer::getCustomers($conn, $companyId);
 
 

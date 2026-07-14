@@ -1,31 +1,104 @@
 <?php
 require "includes/init.php";
 
-$showResetForm = true;
+$showResetForm = false;
 $errors = [];
-if(isset($_GET['token'])){
 
-    $conn = Database::getConn();
-    $resetToken = $_GET['token']?? '';
+$resetToken = trim($_GET['token'] ?? '');
 
-    $tokenRow = PasswordReset::findByToken($conn, $resetToken);
-    //var_dump($tokenRow);
+if ($resetToken === '') {
 
-    $now = new DateTime();
+    die('Invalid reset token.');
 
-    $expiresAt = new DateTime($tokenRow['expires_at']);
+}
 
-    if ($expiresAt < $now) {
+$conn = Database::getConn();
 
-        die('The reset  link has expired');
+$tokenRow = PasswordReset::findByToken($conn, $resetToken);
+
+if (empty($tokenRow)) {
+
+    $_SESSION['reset-alert'] = [
+
+        'type' => 'warning',
+
+        'message' => 'The password reset link is invalid.'
+
+    ];
+
+    Url::redirect('/login.php');
+    exit;
+
+}
+
+$userId = $tokenRow['user_id'];
+$now = new DateTime();
+$expiresAt = new DateTime($tokenRow['expires_at']);
+
+
+if ($expiresAt < $now) {
+    $_SESSION['expiry_check'] = true;
+
+    $_SESSION['reset-alert'] = [
+
+        'type' => 'warning',
+
+        'message' => 'This password reset link has expired.'
+
+    ];
+
+    Url::redirect('/login.php');
+    exit;
+
+}
+
+
+
+
+
+
+
+if (isset($_POST['reset_password'])) {
+
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    $showResetForm = true;
+
+    if (empty($password)) {
+
+        $errors['password'] = "Password is required.";
+
+    } elseif (strlen($password) < 6) {
+
+        $errors['password'] = "Minimum 6 characters.";
 
     }
 
+    if ($password !== $confirmPassword) {
 
-}else{
-    die('Invalid reset token ');
-    exit;
+        $errors['confirm_password'] = "Passwords do not match.";
+
+    }
+
+    if (empty($errors)) {
+
+        $setPassword = User::resetUserPassword($conn,$userId, $password);
+
+        if ($setPassword) {
+            PasswordReset::deleteToken($conn, $resetToken);
+            header("Location: login.php?reset=success");
+            exit;
+
+        } else {
+
+            $errors['general'] = "Unable to reset password.";
+
+        }
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +124,7 @@ if(isset($_GET['token'])){
         <div class="card-body login-card-body">
     <form method="post">
 
-<?php if ($showResetForm): ?>
+
 
     
     <div class="mb-3">
@@ -118,7 +191,7 @@ if(isset($_GET['token'])){
         Back to Login
     </a>
 </div>
-<?php endif; ?>
+
 </form>
 </div>
         </div>
