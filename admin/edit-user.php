@@ -11,7 +11,7 @@ $conn = Database::getConn();
 if(isset($_GET['id'])){
   $userId = $_GET['id'];
   // var_dump($userId);
-  $userInfo = User::getUserData($conn, $userId);
+  $userInfo = User::getUserById($conn, $userId);
   $companies = Company::getCompanies($conn);
   
 }else{
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <a
                     href="users.php"
-                    class="btn btn-outline-secondary">
+                    class="btn btn-secondary">
 
                     Cancel
 

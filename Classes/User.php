@@ -104,8 +104,36 @@ Class User{
 
     }
 
+    public static function getUserProfile($conn, $userId){
+        $sql = "SELECT
+                        u.id,
+                        u.name,
+                        u.email,
+                        u.role,
+                        u.created_at,
+                        c.company_name
+                    FROM users u
+                    INNER JOIN company c
+                        ON c.id = u.company_id
+                    WHERE u.id = ?;";
+           if(! $stmt= $conn->prepare($sql)){
+            die("Failed to prepare statement: " . $conn->error);
+        }
+
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result = $result->fetch_all(MYSQLI_ASSOC)){
+            return $result ;
+
+        }
+        return false;
+        
+
+    }
+
     //function used in admin edit user form
-    public static function getUserData($conn, $userID){
+    public static function getUserById($conn, $userID){
 
         $sql = "SELECT * FROM users where id= ? ";
         if(! $stmt= $conn->prepare($sql)){
@@ -122,6 +150,51 @@ Class User{
         return false;
 
     }
+
+    //get the user current password
+
+    public static function getUserPassword($conn, $userId){
+
+        $sql = "SELECT password FROM users where id = ?";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param(
+                'i',
+                $userId);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result = $result->fetch_assoc()){
+
+    
+            return $result['password'] ;
+
+        }
+        return false;
+
+
+    }
+
+    // update the new password set by the user
+
+    public static function updatePassword($conn, $userId,  $passwordHash){
+
+        
+            $stmt = $conn->prepare(
+                "UPDATE users SET password=? WHERE id=?"
+            );
+
+            $stmt->bind_param("si", $passwordHash, $userId);
+            if($stmt->execute()){
+                return [
+                    "success" => true
+                ];
+            }else{
+                return false;
+            }
+    }
+
 
     public static function updateUserProfile($conn,$name, $email, $role,$companyId,  $userId ){
          $sql = "UPDATE users

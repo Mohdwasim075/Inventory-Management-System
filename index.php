@@ -150,7 +150,7 @@ $recentSales = Dashboard::getRecentsales($conn, $companyId);
                 </div>
 
                 <!-- Low Stock -->
-                <div class="col-md-6">
+                <div class="col-md-6 mt-3">
 
                     <div class="card">
 

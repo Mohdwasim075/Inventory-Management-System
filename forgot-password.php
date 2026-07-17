@@ -65,8 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <link href="styles/styles.css" rel='stylesheet'></link>
   <title>Log </title>
 </head>
-<body >
-<div class="login-body">
+<body class= "login-body">
+
 
     <div class="login-box">
 
@@ -83,24 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </a>
 
                 </div>
-                   <?php if (isset($_SESSION['mail-alert'])): ?>
-
-                        <div class="alert alert-<?= $_SESSION['mail-alert']['type']; ?> alert-dismissible fade show">
-
-                            <?= htmlspecialchars($_SESSION['mail-alert']['message']); ?>
-
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="alert">
-
-                            </button>
-
-                        </div>
-
-                        <?php unset($_SESSION['mail-alert']); ?>
-
-                    <?php endif; ?>
+                   
                 
 
                 <form method="post">
@@ -173,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     </div>
 
-</div>
+
 <!-- Before </body> -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
