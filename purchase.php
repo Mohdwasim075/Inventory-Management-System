@@ -66,8 +66,8 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
             </div>
 
         <?php else: ?>
-
-            <div class="table-responsive">
+            <div class="container">
+                <div class="table-responsive">
 
                 <table class="table table-striped table-hover">
 
@@ -134,6 +134,10 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
                 </table>
 
             </div>
+
+            </div>
+
+            
 
         <?php endif; ?>
 

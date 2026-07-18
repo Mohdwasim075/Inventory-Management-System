@@ -33,9 +33,15 @@ function findUserByEmail($conn, $email){
 
 $success = findUserByEmail($db, 'nisaar@gmail.com');
 // var_dump($token);
-
+$contactNumber = 809002100012
 
 ?>
-<h2><?= var_dump(empty(null))?></h2>
+
+        <?php if(strlen($contactNumber) <= 10) :?>
+                <h2>true</h2>
+        <?php else: ?>
+                <h2>false</h2>
+        <?php endif; ?>
+
 
 

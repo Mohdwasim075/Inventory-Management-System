@@ -109,6 +109,7 @@ Class User{
                         u.id,
                         u.name,
                         u.email,
+                        u.contact_no,
                         u.role,
                         u.created_at,
                         c.company_name
@@ -219,7 +220,29 @@ Class User{
         return $stmt->execute();
     }
 
-    
+    //update the user profile changed 
+
+    public static function updateProfileChanges($conn,$data ){
+
+    $sql = "UPDATE users
+            SET name = ?,
+                email = ?,
+                contact_no = ?
+            WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    $stmt->bind_param(
+        "ssdi",
+        $data['name'],
+        $data['email'],
+        $data['contactNumber'],
+        $data['userId']
+    );
+
+    return $stmt->execute();
+
+    }
 
     /**
      * Add new user to the database

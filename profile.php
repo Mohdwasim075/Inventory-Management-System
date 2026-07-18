@@ -11,7 +11,6 @@ $conn = require 'includes/db.php';
 
 $user = User::getUserProfile($conn, Auth::id());
 
-// var_dump($user);
 
 $currentPassword = "";
 $newPassword = "";
@@ -24,17 +23,22 @@ if(isset($_POST['change-password'])){
     $newPassword = $_POST["newPassword"]?? "";
     $confirmPassword = $_POST["confirmPassword"]?? "";
 
-    if( ! $currentPassword != ''){
+    if($currentPassword === ''){
         $errors['currentPassword'] = "Current Password is required";
     }elseif(!password_verify($currentPassword, $userDBPassword)){
-        $errors['currentPassword'] = "Password  doesn\'t match";
+        $errors['currentPassword'] = "Passwords  do not  match";
     }
     if($newPassword == ''){
         $errors['newPassword'] = "A new Password should be given";
     }
+    if ($newPassword !== '' && password_verify($newPassword, $userDBPassword)
+) {
+    $errors['newPassword'] =
+        "New password must be different from the current password.";
+}
     if($confirmPassword == ''){
         $errors['confirmPassword'] = "The above password should be retyped";
-    }elseif($newPassword !== ($_POST['confirmPassword'] ?? '')){
+    }elseif($newPassword !== $confirmPassword){
         $errors['confirmPassword'] = 'Passwords do not match';
     }
 
@@ -111,6 +115,10 @@ if(isset($_POST['change-password'])){
                     <tr>
                         <th>Email</th>
                         <td><?= htmlspecialchars($user[0]['email']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>Phone Number</th>
+                        <td><?= htmlspecialchars($user[0]['contact_no']) ?></td>
                     </tr>
 
                     <tr>
