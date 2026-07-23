@@ -50,7 +50,7 @@ Class Product{
     }
 
     public static function getAvaliableProducts($conn, $companyId){
-        $sql = "SELECT p.id, p.product_name from products p  join inventory on p.id = inventory.product_id 
+        $sql = "SELECT p.id, p.product_name, inventory.quantity_available from products p  join inventory  on p.id = inventory.product_id 
                         where inventory.company_id = ? and inventory.quantity_available > 0;";
 
         $stmt = $conn->prepare($sql);
@@ -190,12 +190,6 @@ Class Product{
                 }
                 throw $e;
             }
-           
-            
-          
-                
-           
-
 
     }
 

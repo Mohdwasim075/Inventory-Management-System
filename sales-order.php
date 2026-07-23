@@ -12,7 +12,7 @@ $companyId = Auth::companyId();
 
 $invoices = Sales::getSalesInvoices($conn, $companyId);
 
-var_dump(empty($invoices));
+// var_dump(empty($invoices));
 
 require "includes/header.php";
 
@@ -32,6 +32,7 @@ require "includes/header.php";
 
             <thead>
                 <tr>
+                    <th>S.no</th>
                     <th>Invoice No</th>
                     <th>Customer</th>
                     <th>Invoice Date</th>
@@ -47,10 +48,12 @@ require "includes/header.php";
             <?php else : ?>
             <tbody>
 
-                <?php foreach ($invoices as $invoice): ?>
+                <?php foreach ($invoices as $index=>$invoice): ?>
 
                     <tr>
-
+                        <td>
+                            <?= htmlspecialchars($index + 1)?>
+                        </td>
                         <td>
                             <?= htmlspecialchars($invoice['invoice_number']) ?>
                         </td>

@@ -27,11 +27,15 @@ if(isset($_GET['id'])){
 ?>
 
 <?php require "includes/header.php"?>
-<div class="card mt-2">
+<div class="card card-primary mt-2">
+    <div class="card-header">
+
+        <h3 class="card-title">Purchase Order No: <?= htmlspecialchars($order[0]['po_number']) ?></h3>
+
+       
+
+    </div>
     <div class="card-body">
-
-        <h3>Purchase Order No: <?= htmlspecialchars($order[0]['po_number']) ?></h3>
-
         <p>Supplier :
         <?= htmlspecialchars($order[0]['supplier_name']) ?>
         </p>

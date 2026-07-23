@@ -70,7 +70,7 @@ $companyId = Auth::companyId();
 
 ?>
 <?php require "includes/header.php";?>
-<div class="card">
+<div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">Update Product</h3>
     </div>

@@ -2,7 +2,7 @@
 
 Class Company{
 
-    public static function createCompany($conn,$companyName, $subscriptionStatus ){
+    public static function createCompany($conn,$companyName, $subscriptionStatus= "ACTIVE" ){
         $sql = "INSERT INTO company
                 (company_name, subscription_status)
                 VALUES (?, ?)";
@@ -17,7 +17,8 @@ Class Company{
 
         if ($stmt->execute()) {
             $stmt->close();
-            return true;
+            $lastId = $conn->insert_id;
+            return $lastId;
         } else {
 
             $stmt->close();
@@ -58,7 +59,9 @@ Class Company{
     }
 
     public static function getCompanyStatus($conn, $companyId){
+        
         $sql = "SELECT subscription_status from company where id = ?";
+
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
@@ -100,6 +103,29 @@ Class Company{
     $stmt->close();
 
     return $result;
+
+    }
+
+    public static function delete($conn, $companyId){
+
+        $sql = "DELETE  from company  where id =? ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i",$companyId);
+            try{
+                 $stmt->execute();
+                 return [
+                    'success' => true,
+                 ];
+
+            }catch(mysqli_sql_exception $e){
+                if($e->getCode() == 1451){
+                    return [
+                        'success' => false
+                    ];
+                }
+                throw $e;
+            }
 
     }
 }

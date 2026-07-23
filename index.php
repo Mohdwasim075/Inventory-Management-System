@@ -92,7 +92,7 @@ $recentSales = Dashboard::getRecentsales($conn, $companyId);
             <div class="row">
 
                 <!-- Top Selling Products -->
-                <div class="col-md-6">
+                <div class="col-md-6 mt-3">
 
                     <div class="card">
 

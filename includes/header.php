@@ -95,14 +95,14 @@
                             <li class="nav-item">
                                 <a href="purchase.php" class="nav-link">
                                     <i class="nav-icon bi bi-file-earmark-text"></i>
-                                    <p>Purchase Orders</p>
+                                    <p> Purchase Orders</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="purchase-item.php" class="nav-link">
+                                <a href="purchase-add.php" class="nav-link">
                                     <i class="nav-icon bi bi-box-seam"></i>
-                                    <p>Purchase Items</p>
+                                    <p> Add Purchase </p>
                                 </a>
                             </li>
 
@@ -223,12 +223,12 @@
                     
 
                     <!-- Change Password -->
-                    <li>
+                    <!-- <li>
                         <a href="change-password.php" class="dropdown-item">
                             <i class="bi bi-key me-2"></i>
                             Change Password
                         </a>
-                    </li>
+                    </li> -->
 
                     <li><hr class="dropdown-divider"></li>
 

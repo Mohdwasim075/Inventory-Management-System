@@ -25,7 +25,15 @@ $products = Product::getAll($conn,Auth::companyId() ,Auth::id());
             Products
         </h3>
     </div>
+    <div class="mt-2">
+             <a  href= "add-product.php"
+                      class=" add-button btn btn-primary"> 
+                       <i class="bi bi-plus-circle"></i> Add Product
+                    </a>
+        
+       </div>
     <div class="card-body">
+        
         <?php if (isset($_SESSION['product-alert'])): ?>
 
             <div class="alert alert-<?= $_SESSION['product-alert']['type']; ?> alert-dismissible fade show">
@@ -46,15 +54,15 @@ $products = Product::getAll($conn,Auth::companyId() ,Auth::id());
         <?php endif; ?>
     
     <?php if(empty($products)) :?>
-    <p>No products found</p>
+    <div class=" alert alert-info mb-0">
+
+                No Products found.
+
+            </div>
+
+   
 <?php else: ?>
-        <div >
-             <a  href= "add-product.php"
-                      class=" add-button btn btn-primary"> 
-                       <i class="bi bi-plus-circle"></i> Add Product
-                    </a>
         
-       </div>
       
     
         <table class="table   table-striped ">

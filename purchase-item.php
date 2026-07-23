@@ -19,8 +19,6 @@ $products = Product::getAll($conn,Auth::companyId() );
 $purchaseOrders = Purchase::getPurchaseOrder($conn, Auth::companyId());
 
       
-
-
 $errors = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

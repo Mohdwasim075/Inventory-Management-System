@@ -13,7 +13,7 @@ $conn = Database::getConn();
 if(isset($_GET['id'])){
   $companyId = $_GET['id'];
    $company = Company::getCompanyId($conn, $companyId);
-  var_dump($company);
+//   var_dump($company);
 
  
   
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 require "./includes/header.php";
 ?>
 
-<div class="card">
+<div class="card card-primary">
 
     <div class="card-header">
         <h3 class="card-title">Update Company</h3>

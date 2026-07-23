@@ -152,6 +152,27 @@ Class User{
 
     }
 
+     //function used in admin edit user form
+    public static function getCompanyId($conn, $userId){
+
+        $sql = "SELECT company_id FROM users where id= ? ";
+        if(! $stmt= $conn->prepare($sql)){
+            die("Failed to prepare statement: " . $conn->error);
+        }
+
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result = $result->fetch_assoc()){
+            return $result['company_id'] ;
+
+        }
+        return false;
+
+    }
+
+    
+
     //get the user current password
 
     public static function getUserPassword($conn, $userId){
@@ -217,7 +238,8 @@ Class User{
             $userId
         );
 
-        return $stmt->execute();
+       $stmt->execute();
+       return;
     }
 
     //update the user profile changed 
@@ -254,20 +276,23 @@ Class User{
      *
      */
 
-    public static function addNewUser( $conn, $name, $email, $password, $role,  $status){
+    public static function addNewUser( $conn,$companyId, $name, $email,$phoneNumber ,  $password, $role = 'USER',  $status ='Active'){
 
-    $sql = "INSERT INTO users(name, email, password, role, status )
-                        values(?, ?, ?, ? ,?);";
+    $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO users(company_id, name, email, contact_no, password, role, status )
+                        values(?, ?, ?, ?, ?, ? ,?);";
 
     if(! $stmt = $conn->prepare($sql)){
         die("Falied to prepare statement: ". $conn->error);
 
     }
     $stmt->bind_param(
-        "sssss",
+        "issdsss",
+        $companyId,
         $name,
         $email,
-        $password,
+        $phoneNumber,
+        $hashPassword,
         $role,
         $status);
     
@@ -281,4 +306,27 @@ Class User{
     return true;
 
 }
+    public static function delete($conn, $companyId, $userId){
+
+        $sql = "DELETE  from users  where company_id =? and id = ?";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ii",$companyId,$userId);
+            try{
+                 $stmt->execute();
+                 return [
+                    'success' => true,
+                 ];
+
+            }catch(mysqli_sql_exception $e){
+                if($e->getCode() == 1451){
+                    return [
+                        'success' => false
+                    ];
+                }
+                throw $e;
+            }
+
+    }
+   
 }

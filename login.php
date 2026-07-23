@@ -81,116 +81,118 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link href="styles/styles.css" rel='stylesheet'></link>
   <title>Log </title>
 </head>
-<body class="login-body">
-    
+<body class="login-page">
+
 <div class="login-box">
-    
 
-   
-
-    <div class="card">
+    <div class="card card-outline card-primary">
 
         <div class="card-body login-card-body">
-             <div class="login-logo">
+
+            <!-- Logo -->
+            <div class="login-logo">
                 <a href="#"><b>IMS</b></a>
-                
             </div>
 
             <p class="login-box-msg">
                 Sign in to start your session
             </p>
 
+            <!-- General Error -->
             <?php if (!empty($errors['general'])): ?>
                 <div class="alert alert-danger">
                     <?= htmlspecialchars($errors['general']) ?>
                 </div>
             <?php endif; ?>
 
-            <!-- show reset-alert  -->
-            <?php if (isset($_SESSION['reset-alert'])): ?>
+            <!-- Flash Messages -->
+            <?php
+            $alerts = ['reset-alert', 'mail-alert', 'user-account'];
 
-                        <div class="alert alert-<?= $_SESSION['reset-alert']['type']; ?> alert-dismissible fade show">
+            foreach ($alerts as $alert):
+                if (isset($_SESSION[$alert])):
+            ?>
 
-                            <?= htmlspecialchars($_SESSION['reset-alert']['message']); ?>
+                <div class="alert alert-<?= $_SESSION[$alert]['type']; ?> alert-dismissible fade show">
 
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="alert">
+                    <?= htmlspecialchars($_SESSION[$alert]['message']); ?>
 
-                            </button>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                    </button>
 
-                        </div>
+                </div>
 
-                        <?php unset($_SESSION['reset-alert']); ?>
+            <?php
+                    unset($_SESSION[$alert]);
+                endif;
+            endforeach;
+            ?>
 
-                    <?php endif; ?>
-            <?php if (isset($_SESSION['mail-alert'])): ?>
-
-                        <div class="alert alert-<?= $_SESSION['mail-alert']['type']; ?> alert-dismissible fade show">
-
-                            <?= htmlspecialchars($_SESSION['mail-alert']['message']); ?>
-
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="alert">
-
-                            </button>
-
-                        </div>
-
-                        <?php unset($_SESSION['mail-alert']); ?>
-
-                    <?php endif; ?>
-
-            <form method="post">
+            <form method="POST">
 
                 <!-- Username -->
                 <div class="mb-3">
 
-                    <label for="username" class="form-label">
+                    <label
+                        for="username"
+                        class="form-label">
+
                         Username
+
                     </label>
 
                     <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-person-fill"></i>
+                        </span>
 
                         <input
                             type="text"
                             id="username"
                             name="username"
                             class="form-control <?= isset($errors['username']) ? 'is-invalid' : '' ?>"
-                            value="<?= htmlspecialchars($username) ?>"
+                            value="<?= htmlspecialchars($username ?? '') ?>"
                             autocomplete="username"
                             >
-                        
-
-                        <span class="input-group-text">
-                            <i class="bi bi-person-fill"></i>
-                        </span>
+                      
 
                     </div>
-                    <div id="usercheck">
-                            <p>Username is required </p>
+                      <div id="usercheck">
 
                         </div>
 
                     <?php if (isset($errors['username'])): ?>
+
                         <div class="invalid-feedback d-block">
+
                             <?= htmlspecialchars($errors['username']) ?>
+
                         </div>
+
                     <?php endif; ?>
 
                 </div>
 
                 <!-- Password -->
-                <div class="mb-3">
+                <div class="mb-4">
 
-                    <label for="password" class="form-label">
+                    <label
+                        for="password"
+                        class="form-label">
+
                         Password
+
                     </label>
 
                     <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-lock-fill"></i>
+                        </span>
 
                         <input
                             type="password"
@@ -200,47 +202,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             autocomplete="current-password"
                             >
 
-                        <span class="input-group-text">
-                            <i class="bi bi-lock-fill"></i>
-                        </span>
-
                     </div>
                     <div id="passcheck">
-                            <p>Password is required </p>
 
                         </div>
 
                     <?php if (isset($errors['password'])): ?>
+
                         <div class="invalid-feedback d-block">
+
                             <?= htmlspecialchars($errors['password']) ?>
+
                         </div>
+
                     <?php endif; ?>
 
                 </div>
 
-                <div class="row align-items-center">
+                <!-- Links -->
+                <div class="row mb-3">
 
-                    <div class="col-7">
+                    <div class="col-6">
+
                         <a href="forgot-password.php">
-                            Forgot password?
+                            Forgot Password?
                         </a>
-                    </div>
-
-                    <div class="col-5">
-
-                        <div class="d-grid">
-                            <button
-                            id = "login-button"
-                                type="submit"
-                                class="btn btn-primary">
-
-                                <i class="bi bi-box-arrow-in-right"></i>
-                                Login
-
-                            </button>
-                        </div>
 
                     </div>
+
+                    <div class="col-6 text-end">
+
+                        <a href="register.php">
+                            Create Account
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Login Button -->
+                <div class="d-grid">
+
+                    <button
+                        id="login-button"
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                        Login
+
+                    </button>
 
                 </div>
 
@@ -252,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </div>
 
-    
+</body>
 
 <!-- Before </body> -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

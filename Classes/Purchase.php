@@ -16,6 +16,33 @@ Class Purchase{
             return false;
             
     }
+    
+    public static function getPurchaseList($conn, $sessionCompany){
+
+        $sql = "SELECT 
+                    po.id,
+                    po.po_number,
+                    po.status,
+                    po.created_at,
+                    po.total_amount
+                    FROM purchase_orders po
+                    WHERE company_id = ?
+                    ORDER BY po.created_at DESC";
+        
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param(
+                    "i",
+                    $sessionCompany
+        );
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $result = $result->fetch_all(MYSQLI_ASSOC);
+        return $result;
+
+    }
+
     public static function getPurchaseOrder($conn, $sessionCompany){
             $sql = "SELECT
                         po.id,
@@ -48,7 +75,7 @@ Class Purchase{
 
     public static function updatePurchaseOrderTotal($conn, $orderId)
 {
-    $sql = "UPDATE purchase_order
+    $sql = "UPDATE purchase_orders
             SET total_amount = (
                 SELECT COALESCE(SUM(quantity * unit_price),0)
                 FROM purchase_order_items
@@ -124,7 +151,8 @@ Class Purchase{
                 // Bind parameters
                 $stmt->bind_param("isisd", $companyId, $orderNumber,$orderSupplier,$orderStatus, $purchaseAmount);
                 $stmt->execute();
-                return true;
+                $orderId = $conn->insert_id;
+                return $orderId;
             }
             return false;
 
@@ -246,7 +274,9 @@ Class Purchase{
                 );
 
                 $stmt->execute();
+
             }
+            return true;
     }
 
     

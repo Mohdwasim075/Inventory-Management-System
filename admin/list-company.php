@@ -17,27 +17,47 @@ $companies = Company::getCompanies($conn);
 <?php require "./includes/header.php"?>
 
 
-<div class="card">
+<div class="card card-primary">
    
    <div class="card-header">
 
         <h3 class="card-title">Companies</h3>
 
-        <a href="add-company.php"
+       
+
+    </div>
+   
+
+    <div class="card-body">
+          <a href="add-company.php"
            class="btn btn-primary float-end">
             Add Company
         </a>
-
-    </div>
-
-    <div class="card-body">
 
         <?php if(empty($companies)): ?>
 
             <p>No companies found.</p>
 
         <?php else: ?>
+        <div class="card-body">
+        <?php if (isset($_SESSION['company-action'])): ?>
 
+            <div class="alert alert-<?= $_SESSION['company-action']['type']; ?> alert-dismissible fade show">
+
+                <?= htmlspecialchars($_SESSION['company-action']['message']); ?>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+
+                </button>
+
+            </div>
+
+            <?php unset($_SESSION['company-action']); ?>
+
+        <?php endif; ?>
         <table class="table table-striped table-hover">
 
             <thead>
@@ -96,6 +116,12 @@ $companies = Company::getCompanies($conn);
                         </a>
 
                     </td>
+
+                    <td>
+                    <a href="delete-company.php?id=<?= $company['id'] ?>"
+                    class="btn btn-danger"> Delete
+                    </a>
+                </td>
 
                 </tr>
 

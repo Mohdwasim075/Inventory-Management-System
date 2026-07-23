@@ -12,7 +12,7 @@ tbody tr td {
     border-bottom: 1px solid #eee;
 } */
 body{
-    background-color: rgb(209, 209, 214);
+    background-color: rgb(173, 173, 177);
  }
 
  .email{
@@ -56,13 +56,31 @@ body{
 .login-body{
     background: rgb(96, 97, 97);
     background-size: cover;
-    margin: 0px;
-    height: 70vh;
+    margin: 15px;
+    height: 80vh;
     display: flex;
     justify-content: center; /* horizontal */
     align-items: center;     /* vertical */
 
 }
+
+.register-box {
+    width: 140%;
+    max-width: 720px;
+    margin: 5% auto;
+}
+
+.login-card-body {
+    border-radius: 10px;
+}
+
+.input-group-text {
+    min-width: 45px;
+    justify-content: center;
+}
+
+
+
 
 .login-box{
     padding: 20px;

@@ -12,23 +12,29 @@ $companyId = Auth::companyId();
 
 $products = Product::getAvaliableProducts($conn, $companyId);
 
+ $stockMap = [];
 
-// var_dump($products);
+foreach ($products as $product) {
+
+    $stockMap[$product['id']] = $product['quantity_available'];
+
+}
+
+// var_dump($stockMap);
 $customers = Customer::getCustomers($conn, $companyId);
-
-
-
 
 
 $errors = [];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     // Customer Validation
-    $customerId = isset($_POST['customerId']) ? (int)$_POST['customerId'] : 0;
+  
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+ 
+      $customerId = isset($_POST['customerId']) ? (int)$_POST['customerId'] : 0;
 
     if ($customerId <= 0) {
-        $errors[] = "Please select a customer.";
+        $errors[] = "Please select a customer .";
     }
 
     // Sales Items Validation
@@ -41,20 +47,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $salesItems = [];
 
         foreach ($_POST['items'] as $index => $item) {
+         
 
             $productId = isset($item['product_id']) ? (int)$item['product_id'] : 0;
             $quantity = isset($item['quantity']) ? (float)$item['quantity'] : 0;
             $salePrice = isset($item['sale_price']) ? (float)$item['sale_price'] : 0;
 
+            $availableStock = $stockMap[$productId] ?? 0;
+            // var_dump($availableStock);
+ 
+           
             if ($productId <= 0) {
                 $errors[] = "Row " . ($index + 1) . ": Invalid product.";
             }
-
-            if ($quantity <= 0) {
+           if ($quantity <= 0) {
                 $errors[] = "Row " . ($index + 1) . ": Quantity must be greater than zero.";
-            }elseif($quantity ){
+            } elseif ($quantity > $availableStock) {
+                    $errors[] = "Row " . ($index + 1) .
+                        ": Available product stock is " . $availableStock;
+                }
 
-            }
+
+            
 
             if ($salePrice <= 0) {
                 $errors[] = "Row " . ($index + 1) . ": Sale price must be greater than zero.";
@@ -141,7 +155,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="">Select Product</option>
 
                         <?php foreach ($products as $product): ?>
-                            <option value="<?= $product['id'] ?>">
+                            <option value="<?= $product['id'] ?>"
+                             data-stock="<?= $stockMap[$product['id']]; ?>">
                                 <?= htmlspecialchars($product['product_name']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -159,15 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         class="form-control"
                         placeholder="Qty"
                         min="1">
-                         <div
-                            id="stock-info"
-                            class="alert alert-info mt-2 py-2"
-                            style="display:none;">
-
-                            Available Stock:
-                            <strong id="stock-qty">0</strong>
-
-    </div>
+                        
                 </div>
                 
 
@@ -191,6 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button
                         type="button"
                         id="addSaleProduct"
+                        name="addSaleProduct"
                         class="btn btn-primary btn-block">
 
                         <i class="fas fa-plus"></i>

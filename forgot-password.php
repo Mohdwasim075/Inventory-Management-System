@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                    
                 
 
-                <form method="post">
+                <form method="post" onsubmit="verify_email.disabled = true; return true">
 
                     <div class="mb-3">
 

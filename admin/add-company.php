@@ -18,13 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $subscriptionStatus = $_POST["subscription_status"];
 
     if ($companyName == "") {
-        $errors[] = "Company name is required.";
+        $errors['companyName'] = "Company name is required.";
     }
 
 
     if (empty($errors)) {
        $result =  Company::createCompany($conn, $companyName, $subscriptionStatus);
-        redirect("Location : /list-company.php");
+        Url::redirect('admin/list-company.php');
 
        }
     }
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 require "./includes/header.php";
 ?>
 
-<div class="card">
+<div class="card card-primary">
 
     <div class="card-header">
         <h3 class="card-title">Create Company</h3>
@@ -41,23 +41,7 @@ require "./includes/header.php";
 
     <div class="card-body">
 
-        <?php if (!empty($errors)): ?>
-
-            <div class="alert alert-danger">
-
-                <ul class="mb-0">
-
-                    <?php foreach ($errors as $error): ?>
-
-                        <li><?= htmlspecialchars($error) ?></li>
-
-                    <?php endforeach; ?>
-
-                </ul>
-
-            </div>
-
-        <?php endif; ?>
+      
 
         <form method="post">
 
@@ -72,8 +56,15 @@ require "./includes/header.php";
                     <input
                         type="text"
                         name="company_name"
-                        class="form-control"
+                         class="form-control <?= isset($errors['companyName']) ? 'is-invalid' : ''?>"
                         value="<?= htmlspecialchars($companyName) ?>">
+                    
+                    <?php if(isset($errors['companyName'])):?>
+                            <div class="invalid-feedback">
+                                <?= htmlspecialchars($errors['companyName'])?>
+
+                            </div>
+                        <?php endif;?>
 
                 </div>
 

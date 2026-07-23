@@ -22,8 +22,8 @@ $errors = [];
 
 $companyId = (int)$_SESSION['user']['company_id'];
 
-$purchase_orders = Purchase::getPurchaseOrder($conn, $companyId);
-
+//$purchase_orders = Purchase::getPurchaseOrder($conn, $companyId);
+$purchase_orders = Purchase::getPurchaseList($conn, $companyId);
 
 $suppliers = Supplier::getSuppliers($conn, $companyId);
 
@@ -31,33 +31,37 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
 
 // var_dump($purchase_orders);
+// var_dump($purchase_orders[0]);
 ?>
 
-<?php require "includes/header.php"?>
-<div class="card  mt-2">
-        <div class="card card-primary">
+<?php require "includes/header.php"; ?>
 
-        <div class="card-header">
-            <h3 class="card-title"> Purchase Order</h3>
+<div class="card card-primary mt-2">
+
+    <div class="card-header">
+
+        <h3 class="card-title">
+            Purchase Orders
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-end mb-3">
+
+            <a
+                href="purchase-add.php"
+                class="btn btn-primary">
+
+                <i class="bi bi-plus-circle me-1"></i>
+                Add Purchase
+
+            </a>
+
         </div>
-        <div class="mt-3">
-        <a style="color:white" href="add-purchase.php">
-            <button   class="btn btn-primary add-button" ><i class="bi bi-plus-circle"></i>Add Purchase</button>
-        </a>
-       </div>
 
-
-
-        <!-- Purchase Orders -->
-
-        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-
-           
-            
-
-        </div>
-
-        <?php if(empty($purchase_orders)): ?>
+        <?php if (empty($purchase_orders)): ?>
 
             <div class="alert alert-info">
 
@@ -66,21 +70,21 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
             </div>
 
         <?php else: ?>
-            <div class="container">
-                <div class="table-responsive">
 
-                <table class="table table-striped table-hover">
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover align-middle">
 
                     <thead>
 
                         <tr>
 
-                            <th>S.No</th>
+                            <th>#</th>
                             <th>Purchase Date</th>
                             <th>Order Number</th>
                             <th>Status</th>
                             <th>Total Amount</th>
-                            <th></th>
+                            <th class="text-center">Action</th>
 
                         </tr>
 
@@ -88,21 +92,33 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
                     <tbody>
 
-                    <?php foreach($purchase_orders as $index => $purchase_order): ?>
+                    <?php foreach ($purchase_orders as $index => $purchase_order): ?>
+
+                        <?php
+
+                        $statusClass = match ($purchase_order['status']) {
+                            'RECEIVED' => 'bg-success',
+                            'ORDERED'  => 'bg-warning',
+                            'DRAFT'    => 'bg-secondary',
+                            'CANCELLED'=> 'bg-danger',
+                            default    => 'bg-primary'
+                        };
+
+                        ?>
 
                         <tr>
 
                             <td><?= $index + 1 ?></td>
 
-                            <td><?= htmlspecialchars($purchase_order['created_at']); ?></td>
+                            <td><?= htmlspecialchars($purchase_order['created_at']) ?></td>
 
-                            <td><?= htmlspecialchars($purchase_order['po_number']); ?></td>
+                            <td><?= htmlspecialchars($purchase_order['po_number']) ?></td>
 
                             <td>
 
-                                <span class="badge bg-success">
+                                <span class="badge <?= $statusClass ?>">
 
-                                    <?= htmlspecialchars($purchase_order['status']); ?>
+                                    <?= htmlspecialchars($purchase_order['status']) ?>
 
                                 </span>
 
@@ -110,15 +126,17 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
                             <td>
 
-                                ₹<?= number_format($purchase_order['total_amount'],2); ?>
+                                ₹<?= number_format($purchase_order['total_amount'], 2) ?>
 
                             </td>
-                            <td>
+
+                            <td class="text-center">
 
                                 <a
-                                    href="purchase-order-view.php?id=<?= $purchase_order['id']; ?>"
-                                    class="btn btn-sm btn-primary">
+                                    href="purchase-order-view.php?id=<?= $purchase_order['id'] ?>"
+                                    class="btn btn-sm btn-outline-primary">
 
+                                    <i class="bi bi-eye"></i>
                                     View
 
                                 </a>
@@ -135,29 +153,10 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
             </div>
 
-            </div>
-
-            
-
         <?php endif; ?>
 
     </div>
 
-    </div>
 </div>
-                    
 
-
- <script>
-document
-    .getElementById('show-purchase-button')
-    .addEventListener('click', function () {
-
-        document
-            .getElementById('purchase-form')
-            .style.display = 'block';
-
-});
-</script>
-
-<?php require "includes/footer.php"?>
+<?php require "includes/footer.php"; ?>

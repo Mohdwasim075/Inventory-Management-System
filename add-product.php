@@ -228,7 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <input
                         type="number"
-                        step="100"
+        
                         class="form-control <?= isset($errors['costPrice']) ? 'is-invalid' : '' ?>"
                         id="cost-price"
                         name="costPrice"
@@ -248,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <input
                         type="number"
-                        step="100"
+                      
                         class="form-control  <?= isset($errors['sellingPrice']) ? 'is-invalid' : '' ?>"
                         id="selling-price"
                         name="sellingPrice"

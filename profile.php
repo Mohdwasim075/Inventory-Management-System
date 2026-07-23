@@ -11,6 +11,8 @@ $conn = require 'includes/db.php';
 
 $user = User::getUserProfile($conn, Auth::id());
 
+var_dump($user[0]['contact_no']);
+
 
 $currentPassword = "";
 $newPassword = "";
@@ -118,7 +120,13 @@ if(isset($_POST['change-password'])){
                     </tr>
                     <tr>
                         <th>Phone Number</th>
-                        <td><?= htmlspecialchars($user[0]['contact_no']) ?></td>
+                        <td>
+                            <?php if($user[0]['contact_no'] == null):?>
+                                <p>NA</p>
+                                <?php else: ?>
+                            <?=  htmlspecialchars( $user[0]['contact_no'] ) ?>
+                            <?php endif; ?>
+                        </td>
                     </tr>
 
                     <tr>

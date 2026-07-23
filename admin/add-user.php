@@ -13,6 +13,7 @@ $name = "";
 $email = "";
 $role = "";
 $companyId = "";
+$phoneNumber= "";
 $password = "";
 $status = "";
 $errors = [];
@@ -23,6 +24,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $password = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? '';
     $companyId = $_POST["companyId"];
+    $phoneNumber = $_POST["phoneNumber"];
     $status = $_POST['status'] ?? '';
 
     // Validation
@@ -49,23 +51,58 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $errors['companyId'] = 'Please select a company.';
     }
 
+    if ($phoneNumber === '') {
+
+    $errors['phoneNumber'] = "Phone number is required.";
+
+    } elseif (!ctype_digit($phoneNumber)) {
+
+        $errors['phoneNumber'] =
+            "Phone number should contain only digits.";
+
+    } elseif (strlen($phoneNumber) !== 10) {
+
+        $errors['phoneNumber'] =
+            "Phone number must contain exactly 10 digits.";
+
+    }
+
     if ($status === '') {
         $errors['status'] = 'Please select a status.';
     }
+    // var_dump($errors['companyId']);
 
     if (empty($errors)) {
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
+        echo "<pre>";
+
+var_dump($companyId);
+var_dump($name);
+var_dump($email);
+var_dump($phoneNumber);
+var_dump($hashPassword);
+var_dump($role);
+var_dump($status);
+
+echo "</pre>";
+
+exit;
+
         if (!User::addNewUser(
             $conn,
+            $companyId,
             $name,
             $email,
+            $phoneNumber,
             $hashedPassword,
             $role,
             $status
         )) {
             $errors['general'] = 'Unable to add user.';
+        }else{
+            Url:redirect("/admin/users.php");
         }
     }
 
@@ -79,7 +116,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 <?php require "./includes/header.php"; ?>
 
-<div class="card">
+<div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">Add User</h3>
     </div>
@@ -149,7 +186,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         class="form-select form-control <?= isset($errors['company']) ? 'is-invalid' : '' ?>"
                         id="companyId"
                         name="companyId"
-                        required>
+                        >
 
                         <option value="">Select Company</option>
 
@@ -165,9 +202,44 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                         <?php endforeach; ?>
 
-                    </select>
+                       
 
+                    </select>
+                     <?php if (isset($errors['companyId'])): ?>
+                        <div class="invalid-feedback">
+                            <?= htmlspecialchars($errors['companyId']) ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
+                
+                 <div class="col-md-6">
+
+                        <label class="form-label">
+                            Phone Number
+                        </label>
+
+                        
+
+                            <input
+                                type="text"
+                                name="phoneNumber"
+                                class="form-control <?= isset($errors['phoneNumber']) ? 'is-invalid' : '' ?>"
+                                value="<?= htmlspecialchars($phoneNumber ?? '') ?>"
+                                
+                                >
+
+               
+
+                        <?php if(isset($errors['phoneNumber'])): ?>
+
+                            <div class="invalid-feedback d-block">
+                                <?= htmlspecialchars($errors['phoneNumber']) ?>
+                            </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
 
                 <!-- Role -->
                 <div class="col-md-6">
@@ -235,7 +307,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         class="form-select <?= isset($errors['status']) ? 'is-invalid' : '' ?>"
                         id="status"
                         name="status">
-
+                          <option value="">Select Status</option>
                         <option value="ACTIVE"
                             <?= $status === 'ACTIVE' ? 'selected' : '' ?>>
                             Active
@@ -253,7 +325,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <?= htmlspecialchars($errors['status']) ?>
                         </div>
                     <?php endif; ?>
-                    <div class="col-12 mt-3">
+                    
+                    
+
+
+                </div>
+                 
+            </div>
+            <div class="col-12 mt-3">
                         <button class="btn btn-primary" type="submit">
                         <i class="bi bi-person-plus"></i>
                             Add User
@@ -264,12 +343,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </a>
 
                     </div>
-                    
-
-
-                </div>
-                 
-            </div>
 
         </div>
 

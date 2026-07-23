@@ -73,6 +73,7 @@ $(document).ready(function () {
 
 });
 $(document).ready(function () {
+    console.log("js loaded");
 
     let rowIndex = 0;
 
@@ -100,7 +101,26 @@ $(document).ready(function () {
             return;
         }
 
+        let existing = false;
+
+        $("#purchaseItemsTable tbody tr").each(function () {
+
+            let existingProduct = $(this)
+                .find("input[name$='[product_id]']")
+                .val();
+
+            if (existingProduct == productId) {
+                existing = true;
+            }
+        });
+
+        if (existing) {
+            alert("This product is already added, please try editing the previous order item ");
+            return;
+        }
+       
         let total = quantity * unitPrice;
+        
 
         let row = `
             <tr>
@@ -144,6 +164,7 @@ $(document).ready(function () {
 
             </tr>
         `;
+        
 
         $("#purchaseItemsTable tbody").append(row);
 
@@ -161,40 +182,75 @@ $(document).ready(function () {
     });
 
 });
+
+//validation for Point of Sale
 $(document).ready(function () {
 
-   
+    let rowIndex = 0;
 
     $("#addSaleProduct").click(function () {
-         let rowIndex = 0;
-         let customerName = $("#customer-Id").text();
+         
+       let customerId = $("#customer-Id").val();
+
+    // if (customerId === "") {
+    //     alert("Please select a customer");
+    //     return;
+    // }
         let productId = $("#product_id").val();
         let productName = $("#product_id option:selected").text();
 
         let quantity = $("#quantity").val();
         let salePrice = $("#sale_price").val();
         
-        if(customerName === ""){
-            alert("Please select Customer ");
+        // if(customerName === ""){
+        //     alert("Please select Customer ");
+        //     return;
+
+
+        // }
+        // if (productId === "") {
+        //     alert("Please select a product");
+        //     return;
+        // }
+
+        // if (quantity <= 0 || quantity === "") {
+        //     alert("Enter a valid quantity");
+        //     return;
+        // }
+
+        // if (salePrice <= 0 || salePrice === "") {
+        //     alert("Enter a valid price");
+        //     return;
+        // }
+        let existing = false;
+
+        $("#salesItemsTable tbody tr").each(function () {
+
+            let existingProduct = $(this)
+                .find("input[name$='[product_id]']")
+                .val();
+
+            if (existingProduct == productId) {
+                existing = true;
+            }
+        });
+
+        if (existing) {
+            alert("This product is already added.");
             return;
-
-
         }
-        if (productId === "") {
-            alert("Please select a product");
+
+         let availableStock = parseFloat(
+        $("#product_id option:selected").data("stock")
+            );
+
+        if (quantity > availableStock) {
+            alert(
+                "Only " + availableStock +
+                " item(s) available in stock."
+            );
             return;
         }
-
-        if (quantity <= 0 || quantity === "") {
-            alert("Enter a valid quantity");
-            return;
-        }
-
-        if (salePrice <= 0 || salePrice === "") {
-            alert("Enter a valid price");
-            return;
-        }
-
         let total = quantity * salePrice;
 
         let row = `

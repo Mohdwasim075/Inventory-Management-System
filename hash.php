@@ -43,5 +43,53 @@ $contactNumber = 809002100012
                 <h2>false</h2>
         <?php endif; ?>
 
+<?php
+$arr = array('volvo','bmw','hyundai');
 
 
+// strings in php 
+
+//string built-in functions
+
+//strlen() 
+//str_contains()
+//str_word_count()
+//str_starts_with()
+// str_ends_with
+
+$word = "Hello lovely bird!";
+$word_arr = explode(" ", $word);
+var_dump($word_arr);
+
+//match 
+
+$favColor = "red";
+
+$result = match($favColor){
+        "red" => "Your fav color is red",
+        "yellow" => "Your fav color is blue",
+        default =>"Neither red nor black",
+};
+
+var_dump($result);
+$fullName = "Mohammed Wasim";
+var_dump(strlen($fullName));
+var_dump(str_word_count($fullName));
+
+
+$members = [
+        "wasim" => 24,
+        "Aneesha" => 19,
+        "Suhana" => 6,
+        "Siddik"=> 12
+];
+
+foreach($members as $name => &$member){
+        $member = 'person';
+
+}
+unset($member);
+
+
+//  arsort($members);
+var_dump($members);

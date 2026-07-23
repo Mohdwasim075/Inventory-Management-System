@@ -26,7 +26,7 @@ $conn = require "includes/db.php";
     <div>
          <a
                 href="add-customer.php"
-                class="add-button btn btn-primary btn-sm mt-3">
+                class="add-button btn btn-primary btn mt-3">
 
                 <i class="bi bi-plus-circle"></i>
                 Add Customer
@@ -76,14 +76,17 @@ $conn = require "includes/db.php";
         <?php endif; ?>
 
         <?php if (empty($customers)): ?>
-
-            <div
-                id="no-customer-tag"
-                class="alert ">
+            <div class="container">
+                <div class=" alert alert-info mb-2">
 
                 No Customers found.
 
             </div>
+
+
+            </div>
+             
+          
 
 
         <?php else: ?>

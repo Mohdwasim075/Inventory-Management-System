@@ -10,7 +10,7 @@ $users = User::getAllUser($conn);
 $companies = Company::getCompanies($conn);
 // var_dump($companies);
 
-var_dump($users);
+var_dump($_SESSION['user']);
 
 ?>
 
@@ -18,15 +18,39 @@ var_dump($users);
 <?php require "./includes/header.php"?>
 
 
-<div class="card">
+<div class="card card-primary">
+    <div class="card-header">
+
+        <h3 class="card-title">Users</h3>
+
+       
+
+    </div>
    
     <div class="card-body">
+        <?php if (isset($_SESSION['user-action'])): ?>
+
+            <div class="alert alert-<?= $_SESSION['user-action']['type']; ?> alert-dismissible fade show">
+
+                <?= htmlspecialchars($_SESSION['user-action']['message']); ?>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+
+                </button>
+
+            </div>
+
+            <?php unset($_SESSION['user-action']); ?>
+
+        <?php endif; ?>
 <?php if(empty($users)) :?>
     <p>No users found</p>
 <?php else: ?>
     <div >
-        <h2>Users</h2>
-        <a style="color:white" href="add-user.php"><button  id ="add-user" class="btn btn-primary" >Add User</button></a>
+        <a style="color:white" href="add-user.php"><button  id ="add-user" class="btn btn-primary float-end" >Add User</button></a>
        </div>
     
         <table class="table table-striped ">
@@ -53,6 +77,11 @@ var_dump($users);
                 <td>
                     <a href="edit-user.php?id=<?= $user['id'] ?>"
                     class="btn btn-success"> Edit
+                    </a>
+                </td>
+                <td>
+                    <a href="delete-user.php?id=<?= $user['id'] ?>"
+                    class="btn btn-danger"> Delete
                     </a>
                 </td>
                 
