@@ -76,9 +76,10 @@ Sell products to customers through invoices.
 
 Features include:
 
-- Create Sales Invoices
+
 - Select Customer
 - Add multiple products
+- Create Sales Invoices
 - Automatic stock deduction
 - Calculate totals
 - Profit calculation
