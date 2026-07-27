@@ -12,7 +12,7 @@ $conn = Database::getConn();
 
 if(isset($_GET['id'])){
   $companyId = $_GET['id'];
-   $company = Company::getCompanyId($conn, $companyId);
+   $company = User::getCompanyId($conn, $companyId);
 //   var_dump($company);
 
  

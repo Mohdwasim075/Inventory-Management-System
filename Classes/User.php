@@ -31,6 +31,7 @@ Class User{
                 'company_id' => $user['company_id'],
                 'name'       => $user['name'],
                 'email'      => $user['email'],
+                'status'     =>$user['status'],
                 'role'       => $user['role']
           ];
 

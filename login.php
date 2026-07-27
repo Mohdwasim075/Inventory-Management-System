@@ -31,39 +31,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $user = Auth::user();
 
-             if (!User::authenticate($conn, $username, $password)) {
-            $errors['general'] = 'Invalid username or password.';
+            if (!User::authenticate($conn, $username, $password)) {
+
+    $errors['general'] = 'Invalid username or password.';
+
         } else {
 
             $user = Auth::user();
-            switch ($user['role']){
+
+            switch ($user['role']) {
+
                 case 'SUPERADMIN':
                     Url::redirect("/admin/index.php");
                     break;
+
                 case 'ADMIN':
-                    $companyStatus = Company::getCompanyStatus($conn,Auth::companyId());
-                    if($companyStatus === "ACTIVE"  ){
-                        Url::redirect("/index.php");
+
+                    $companyStatus = Company::getCompanyStatus(
+                        $conn,
+                        Auth::companyId()
+                    );
+
+                    if ($companyStatus !== "ACTIVE") {
+
+                        $errors['general'] =
+                            'Your company account has been suspended. Please contact the administrator.';
                         break;
                     }
-                   $errors['general'] =
-                    'Your account has been suspended. Please contact the administrator.';
+
+                    Url::redirect("/index.php");
                     break;
+
                 case 'USER':
-                     $companyStatus = Company::getCompanyStatus($conn,Auth::companyId());
-                    if($companyStatus === "ACTIVE"  ){
-                        Url::redirect("/index.php");
+
+                    $companyStatus = Company::getCompanyStatus(
+                        $conn,
+                        Auth::companyId()
+                    );
+
+                    if ($companyStatus !== "ACTIVE") {
+
+                        $errors['general'] =
+                            'Your company account has been suspended. Please contact the administrator.';
                         break;
                     }
-                   $errors['general'] =
-                    'Your account has been suspended. Please contact the administrator.';
+
+                    if ($user['status'] !== "ACTIVE") {
+
+                        $errors['general'] =
+                            'Your user account has been suspended. Please contact the administrator.';
+                        break;
+                    }
+
+                    Url::redirect("/index.php");
                     break;
 
                 default:
-                $errors['general'] = "Invalid user role";
-            
-                }
+                    $errors['general'] = "Invalid user role";
             }
+        }
         }
     }
 }
