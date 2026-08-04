@@ -9,8 +9,10 @@ Auth::requireRole('USER');
 
 $conn = require 'includes/db.php';
 
-$products = Product::getAll($conn,Auth::companyId() ,Auth::id());
-
+// $products = Product::getAll($conn,Auth::companyId());
+// var_dump(Product::getTotal($conn, Auth::companyId()));
+$paginator = new Paginator($_GET["page"] ?? 1 , 3 , Product::getTotal($conn, Auth::companyId()) );
+$products = Product::getProduct($conn, Auth::companyId(), $paginator->limit, $paginator->offset);
 
 
 
@@ -81,9 +83,11 @@ $products = Product::getAll($conn,Auth::companyId() ,Auth::id());
             </tr>
         </thead>
         <tbody>
+            <?php $no = $paginator->offset ; ?>
             <?php foreach($products as $id => $product): ?>
+            <?php $no++ ?>
             <tr class = "table-row">
-                <td><?= $id + 1 ;?></td>
+                <td><?= $no;?></td>
                 <td><?= $product['product_code'] ?></td>
                 <td><?= $product['product_name'] ?></td>
                 <td><?= $product['category_name'] ?></td>
@@ -108,8 +112,9 @@ $products = Product::getAll($conn,Auth::companyId() ,Auth::id());
             <?php endforeach;?>
         </tbody>    
         </table>
-    
+
     </div>
+    <?php require "./includes/pagination.php";?>
     
 </div>
 

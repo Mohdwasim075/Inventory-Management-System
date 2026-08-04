@@ -122,7 +122,7 @@ Class Sales{
                     }
             }
     }
-            public static function getSalesInvoices(mysqli $conn, int $companyId)
+            public static function getSalesInvoices( $conn,  $companyId, $limit, $offset)
                 {
                     $sql = "SELECT
                                 so.id,
@@ -141,16 +141,35 @@ Class Sales{
                                 so.invoice_number,
                                 c.customer_name,
                                 so.created_at
-                            ORDER BY so.created_at DESC";
+                            ORDER BY so.created_at DESC
+                            limit ?
+                            offset ?";
 
                     $stmt = $conn->prepare($sql);
 
-                    $stmt->bind_param("i", $companyId);
+                    $stmt->bind_param("iii", 
+                                    $companyId,
+                                    $limit,
+                                    $offset);
 
                     $stmt->execute();
 
                     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 }
+
+        public static function getTotalSales($conn, $companyId){
+            $sql = "SELECT count(*) As total from sales_order where company_id = ?";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i",
+                                $companyId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+
+       return $row['total'];
+        }
 
             }
 

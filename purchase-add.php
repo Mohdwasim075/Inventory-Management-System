@@ -14,6 +14,11 @@ $conn = Database::getConn();
 $suppliers = Supplier::getSuppliers($conn, Auth::companyId());
 
 $products = Product::getAll($conn,Auth::companyId() );
+
+if(isset($_POST['items'])){
+    var_dump($_POST['items']);
+
+}
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
    
 
@@ -58,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
     
         $orderItems = [];
-
+        var_dump($orderItems);
         foreach ($_POST['items'] as $index => $item) {
 
             $productId = isset($item['product_id']) ? (int)$item['product_id'] : 0;

@@ -23,9 +23,7 @@ Class Customer{
 
                 $stmt = $conn->prepare($sql);
 
-                if(!$stmt){
-                    die("error in sql " . $conn->error);
-                }
+            
                 $stmt->bind_param("i",$companyId);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -61,9 +59,7 @@ Class Customer{
         
         $stmt = $conn->prepare($sql);
 
-                if (!$stmt) {
-                    throw new Exception($conn->error);
-                }
+               
                 $stmt->bind_param("is",$companyId, $customerName);
                 try{
                  $stmt->execute();

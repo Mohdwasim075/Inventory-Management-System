@@ -21,9 +21,9 @@ $errors = [];
 
 
 $companyId = (int)$_SESSION['user']['company_id'];
-
+$paginator = new Paginator($_GET["page"] ?? 1 , 3 , Purchase::getTotalPurchase($conn, $companyId) );
 //$purchase_orders = Purchase::getPurchaseOrder($conn, $companyId);
-$purchase_orders = Purchase::getPurchaseList($conn, $companyId);
+$purchase_orders = Purchase::getPurchaseList($conn, $companyId, $paginator->limit, $paginator->offset );
 
 $suppliers = Supplier::getSuppliers($conn, $companyId);
 
@@ -79,7 +79,7 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
                         <tr>
 
-                            <th>#</th>
+                            <th>S.no</th>
                             <th>Purchase Date</th>
                             <th>Order Number</th>
                             <th>Status</th>
@@ -91,8 +91,10 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
                     </thead>
 
                     <tbody>
+                    <?php $no = $paginator->offset;?>
 
                     <?php foreach ($purchase_orders as $index => $purchase_order): ?>
+                        <?php $no++; ?>
 
                         <?php
 
@@ -108,7 +110,7 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
 
                         <tr>
 
-                            <td><?= $index + 1 ?></td>
+                            <td><?= $no; ?></td>
 
                             <td><?= htmlspecialchars($purchase_order['created_at']) ?></td>
 
@@ -156,7 +158,7 @@ $suppliers = Supplier::getSuppliers($conn, $companyId);
         <?php endif; ?>
 
     </div>
-
+   <?php require "./includes/pagination.php";?>
 </div>
 
 <?php require "includes/footer.php"; ?>

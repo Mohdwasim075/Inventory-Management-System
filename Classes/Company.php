@@ -87,9 +87,7 @@ Class Company{
 
          $stmt = $conn->prepare($sql);
 
-    if (!$stmt) {
-        return false;
-    }
+
 
     $stmt->bind_param(
         "ssi",

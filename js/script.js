@@ -72,6 +72,8 @@ $(document).ready(function () {
     });
 
 });
+
+// js for purchaseItemTable
 $(document).ready(function () {
     console.log("js loaded");
 

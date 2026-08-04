@@ -17,7 +17,7 @@ Class Purchase{
             
     }
     
-    public static function getPurchaseList($conn, $sessionCompany){
+    public static function getPurchaseList($conn, $sessionCompany, $limit, $offset){
 
         $sql = "SELECT 
                     po.id,
@@ -27,13 +27,17 @@ Class Purchase{
                     po.total_amount
                     FROM purchase_orders po
                     WHERE company_id = ?
-                    ORDER BY po.created_at DESC";
+                    ORDER BY po.created_at DESC
+                    LIMIT ?
+                    OFFSET ?";
         
         $stmt = $conn->prepare($sql);
 
         $stmt->bind_param(
-                    "i",
-                    $sessionCompany
+                    "iii",
+                    $sessionCompany,
+                    $limit,
+                    $offset
         );
 
         $stmt->execute();
@@ -144,17 +148,34 @@ Class Purchase{
 
             return (float)$stmt->get_result()->fetch_assoc()['total_amount'];
 }
+    public static function getTotalPurchase($conn, $companyId){
+
+        $sql = "SELECT count(*) as total from purchase_orders where company_id = ?";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param("i",
+                          $companyId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_assoc();
+
+        return $row['total'];
+
+    }
     public static function addPurchaseOrder($conn,$companyId,$orderNumber, $orderSupplier,$orderStatus, $purchaseAmount){
            $sql = "INSERT INTO purchase_orders(company_id, po_number, supplier_id, status, total_amount)
                         values (?,?,?,?,?) ";
-            if($stmt = $conn->prepare($sql)) {
+        $stmt = $conn->prepare($sql);
                 // Bind parameters
                 $stmt->bind_param("isisd", $companyId, $orderNumber,$orderSupplier,$orderStatus, $purchaseAmount);
                 $stmt->execute();
                 $orderId = $conn->insert_id;
                 return $orderId;
-            }
-            return false;
+            
+            
 
        
     }

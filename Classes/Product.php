@@ -37,9 +37,7 @@ Class Product{
 
             $stmt = $conn->prepare($sql);
 
-                if (!$stmt) {
-                    throw new Exception($conn->error);
-                }
+                
                 $stmt->bind_param("i",$sessionCompany);
                 $stmt->execute();
                
@@ -47,6 +45,55 @@ Class Product{
                 $result = $result->fetch_all(MYSQLI_ASSOC);
                 return $result;
             
+    }
+
+    public static function getTotal($conn, $companyId){
+       $sql = "SELECT count(*) As total from products where company_id = ?";
+
+       $stmt = $conn->prepare($sql);
+       $stmt->bind_param("i",
+                        $companyId);
+       $stmt->execute();
+       $result = $stmt->get_result();
+       $row = $result->fetch_assoc();
+
+
+       return $row['total'];
+
+    }
+    public static function  getProduct($conn,$sessionCompany,  $limit, $offset){
+
+                $sql = "SELECT
+                        p.*,
+                        c.category_name,
+                        COALESCE(inv.quantity_available, 0) total_quantity
+                    FROM products p
+                    
+                    INNER JOIN categories c
+                        ON p.category_id = c.id
+                    LEFT JOIN inventory inv
+                        ON p.id = inv.product_id
+                    WHERE p.company_id = ?
+                    GROUP BY
+                        p.id,
+                        p.product_name,
+                        c.category_name
+                    LIMIT ?
+                    OFFSET ? ";
+
+                $stmt = $conn->prepare($sql);
+
+                
+                $stmt->bind_param("iii",
+                            $sessionCompany,
+                            $limit,
+                            $offset);
+                $stmt->execute();
+               
+                $result = $stmt->get_result();
+                $result = $result->fetch_all(MYSQLI_ASSOC);
+                return $result;
+
     }
 
     public static function getAvaliableProducts($conn, $companyId){
@@ -107,9 +154,7 @@ Class Product{
 
              $stmt = $conn->prepare($sql);
 
-                if (!$stmt) {
-                    throw new Exception($conn->error);
-                }
+        
                 $stmt->bind_param("iissdd", $company_id,$category_id, $productCode,$productName,$costPrice, $sellingPrice);
                 if (!$stmt->execute()) {
                     die($stmt->error);

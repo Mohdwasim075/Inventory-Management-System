@@ -9,8 +9,8 @@ Auth::requireRole('USER');
 
 
 $companyId = Auth::companyId();
-
-$invoices = Sales::getSalesInvoices($conn, $companyId);
+$paginator = new Paginator($_GET["page"] ?? 1 , 3 , Sales::getTotalSales($conn, $companyId) );
+$invoices = Sales::getSalesInvoices($conn, $companyId,  $paginator->limit, $paginator->offset);
 
 // var_dump(empty($invoices));
 
@@ -47,12 +47,12 @@ require "includes/header.php";
                                     </tr>
             <?php else : ?>
             <tbody>
-
-                <?php foreach ($invoices as $index=>$invoice): ?>
-
+                <?php $index = $paginator->offset;?>
+                <?php foreach ($invoices as $id => $invoice): ?>
+                        <?php $index++; ?>
                     <tr>
                         <td>
-                            <?= htmlspecialchars($index + 1)?>
+                            <?= htmlspecialchars($index)?>
                         </td>
                         <td>
                             <?= htmlspecialchars($invoice['invoice_number']) ?>
@@ -80,6 +80,8 @@ require "includes/header.php";
         </table>
 
     </div>
+    <?php require "./includes/pagination.php";?>
+    
 
 </div>
 
